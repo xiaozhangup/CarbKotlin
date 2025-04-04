@@ -1,4 +1,4 @@
-rootProject.name = "KotlinMC"
+rootProject.name = "CarbKotlin"
 
 pluginManagement {
     plugins {

@@ -1,5 +1,0 @@
-name: Kotlin
-main: xyz.gmitch215.kotlinmc.BungeeCord
-description: ${project.description}
-version: ${project.ext.kotlin_version}
-author: gmitch215
