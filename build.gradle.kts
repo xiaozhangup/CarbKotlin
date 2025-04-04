@@ -9,6 +9,7 @@ val serializationVersion = version("kotlinx-serialization")
 val atomicfuVersion = version("kotlinx-atomicfu")
 val kotlinIoVersion = version("kotlinx-io")
 val dateTimeVersion = version("kotlinx-datetime")
+val ktorVersion = version("ktor")
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -64,6 +65,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:atomicfu:${atomicfuVersion}")
     implementation("org.jetbrains.kotlinx:kotlinx-io-core:${kotlinIoVersion}")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:${dateTimeVersion}")
+
+    implementation("io.ktor:ktor-server-core:${ktorVersion}")
+    implementation("io.ktor:ktor-server-netty:${ktorVersion}")
+    implementation("io.ktor:ktor-server-host-common:${ktorVersion}")
 
     compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
     compileOnly("com.velocitypowered:velocity-api:3.1.1")
