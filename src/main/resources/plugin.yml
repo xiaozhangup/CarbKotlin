@@ -1,8 +1,8 @@
-name: Kotlin
+name: CarbKotlin
 main: xyz.gmitch215.kotlinmc.Spigot
 version: ${project.ext.kotlin_version}
 description: ${project.description}
-api-version: 1.13
+api-version: 1.21.4
 author: gmitch215
-folia-supported: true
+load: STARTUP
 website: ${project.ext.url}
