@@ -62,9 +62,9 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${serializationVersion}")
-    implementation("org.jetbrains.kotlinx:atomicfu:${atomicfuVersion}")
-    implementation("org.jetbrains.kotlinx:kotlinx-io-core:${kotlinIoVersion}")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:${dateTimeVersion}")
+//    implementation("org.jetbrains.kotlinx:kotlinx-io-core:${kotlinIoVersion}")
+//    implementation("org.jetbrains.kotlinx:atomicfu:${atomicfuVersion}")
 
     implementation("io.ktor:ktor-server-core:${ktorVersion}")
     implementation("io.ktor:ktor-server-netty:${ktorVersion}")
