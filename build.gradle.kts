@@ -52,6 +52,7 @@ repositories {
     mavenLocal()
 
     maven("https://plugins.gradle.org/m2/")
+    maven("https://maven.nostal.ink/repository/maven-public")
     maven("https://oss.sonatype.org/content/repositories/snapshots")
     maven("https://oss.sonatype.org/content/repositories/central")
     maven("https://repo.papermc.io/repository/maven-public/")
@@ -60,6 +61,7 @@ repositories {
 // Dependencies & Plugins
 
 dependencies {
+    // Kotlin & Kotlinx
     implementation("org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}")
     implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
@@ -68,12 +70,17 @@ dependencies {
 //    implementation("org.jetbrains.kotlinx:kotlinx-io-core:${kotlinIoVersion}")
 //    implementation("org.jetbrains.kotlinx:atomicfu:${atomicfuVersion}")
 
+    // Ktor
     implementation("io.ktor:ktor-server-core:${ktorVersion}")
     implementation("io.ktor:ktor-server-netty:${ktorVersion}")
     implementation("io.ktor:ktor-server-host-common:${ktorVersion}")
 
+    // Okio
     implementation("com.squareup.okhttp3:okhttp:${okhttpVersion}")
     implementation("com.squareup.okio:okio:${okioVersion}")
+
+    // Other
+    implementation("ink.pmc.advkt:core:1.0.0")
 
     compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
     compileOnly("com.velocitypowered:velocity-api:3.1.1")
