@@ -10,6 +10,8 @@ val atomicfuVersion = version("kotlinx-atomicfu")
 val kotlinIoVersion = version("kotlinx-io")
 val dateTimeVersion = version("kotlinx-datetime")
 val ktorVersion = version("ktor")
+val okioVersion = version("okio")
+val okhttpVersion = version("okhttp")
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -69,6 +71,9 @@ dependencies {
     implementation("io.ktor:ktor-server-core:${ktorVersion}")
     implementation("io.ktor:ktor-server-netty:${ktorVersion}")
     implementation("io.ktor:ktor-server-host-common:${ktorVersion}")
+
+    implementation("com.squareup.okhttp3:okhttp:${okhttpVersion}")
+    implementation("com.squareup.okio:okio:${okioVersion}")
 
     compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
     compileOnly("com.velocitypowered:velocity-api:3.1.1")
