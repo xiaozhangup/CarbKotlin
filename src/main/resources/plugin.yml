@@ -4,5 +4,5 @@ version: ${project.ext.kotlin_version}
 description: ${project.description}
 api-version: 1.21.4
 author: gmitch215
-load: STARTUP
+load: ROOT
 website: ${project.ext.url}
