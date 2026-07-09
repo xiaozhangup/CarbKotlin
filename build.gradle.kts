@@ -1,5 +1,5 @@
 plugins {
-    id("com.gradleup.shadow") version "8.3.5"
+    id("com.gradleup.shadow") version "9.4.3"
     java
 }
 
@@ -14,8 +14,9 @@ val okioVersion = version("okio")
 val okhttpVersion = version("okhttp")
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    toolchain.languageVersion.set(JavaLanguageVersion.of(25))
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 }
 
 group = "xyz.gmitch215.kotlinmc"
@@ -80,10 +81,10 @@ dependencies {
     implementation("com.squareup.okio:okio:${okioVersion}")
 
     // Other
-    implementation("ink.pmc.advkt:core:1.0.0")
+    implementation("plutoproject.adventurekt:core:v3.0.0-paper")
 
-    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
-    compileOnly("com.velocitypowered:velocity-api:3.1.1")
+    compileOnly("io.papermc.paper:paper-api:26.2.build.47-alpha")
+    compileOnly("com.velocitypowered:velocity-api:3.5.0-SNAPSHOT")
 }
 
 fun version(name: String): String = File("versions/${name}.txt").bufferedReader().use { it.readLine() }
