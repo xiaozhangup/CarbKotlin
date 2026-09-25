@@ -1,16 +1,65 @@
-# KotlinMC
+# CarbKotlin
 
-A library for the kotlin runtime and various Kotlin Libraries on Spigot, BungeeCord, Velocity, and Sponge Servers.
+Shared Kotlin runtime and plugin services, built separately for Paper and Velocity.
 
-## How does it Work?
+## Modules and artifacts
 
-Every hour, the actions workflow will run a series of bash scripts (see the `scripts` folder) to send an API request 
-to the following libraries for new releases:
-- [`JetBrains/Kotlin`](https://github.com/JetBrains/Kotlin)
-- [`Kotlin/kotlinx.coroutines`](https://github.com/Kotlin/kotlinx.coroutines)
-- [`Kotlin/kotlinx.serialization`](https://github.com/Kotlin/kotlinx.serialization) 
-- [`Kotlin/kotlinx-atomicfu`](https://github.com/Kotlin/kotlinx.atomicfu)
-- [`Kotlin/kotlinx-io`](https://github.com/Kotlin/kotlinx-io)
-- [`Kotlin/kotlinx-datetime`](https://github.com/Kotlin/kotlinx-datetime)
+- `common`: configuration, database, Redis, reflection, common utilities, command
+  DSL and task-chain implementation; no dependency on either platform API.
+- `paper`: Paper entry point, command registration, player/location helpers and scheduler.
+- `velocity`: Velocity entry point, command registration, player helpers and scheduler.
 
-If a new release is detected, versions stored in the `versions` folder will be updated, the Gradle Plugin will automatically be updated to include the latest version, and a publish is automatically shipped to [Modrinth](https://modrinth.com/plugin/kotlinmc/).
+Build and publish locally with `./gradlew build publishToMavenLocal`.
+
+| Platform | Runtime JAR | Compile-only dependency |
+| --- | --- | --- |
+| Paper | `paper/build/libs/CarbKotlin-2.3.20-paper.jar` | `me.xiaozhangup.crab:CarbKotlin:2.3.20:paper` |
+| Velocity | `velocity/build/libs/CarbKotlin-2.3.20-velocity.jar` | `me.xiaozhangup.crab:CarbKotlin:2.3.20:velocity` |
+
+Both platform JARs are self-contained, including common and the bundled libraries.
+Install only the appropriate runtime JAR on each server; replace the old combined
+CarbKotlin JAR. Plugin identity remains `CarbKotlin` on Paper and `carbkotlin` on
+Velocity, so plugin dependency declarations do not change. The `-api` and `-plain`
+JARs are not server plugins. Do not put both platform variants on one classpath.
+
+Consumers keep `isTransitive = false` and do not shade CarbKotlin. The thin API JAR
+contains the common and selected platform API, not the bundled Kotlin runtime.
+
+## Unified calls
+
+Each plugin holds one `Crab` instance and uses module-local top-level wrappers:
+
+```kotlin
+command("example") { /* command DSL */ }
+submitTask(delay = 20) { /* task */ }
+submitAsyncTask { /* async task */ }
+submitChain { /* chain DSL */ }
+```
+
+These helpers are `internal` in each plugin's `util/ext/Crab.kt` or `utils/ext/Crab.kt` and forward to
+that plugin's Crab. The common services own registration and cleanup. See
+[Crab initialization, ownership and shutdown](CRAB.md).
+
+- [Commands, CommandHelper and Notify](COMMANDS.md)
+- [Task chains](CHAINS.md)
+- [Database DSL](DATABASE.md)
+- [Configuration, Redis and reflection](SHARED_SERVICES.md)
+- [Common utilities](COMMON_UTIL.md)
+
+Library versions remain in `versions/`.
+
+Maven publishes only classifiers `paper` and `velocity` under
+`me.xiaozhangup.crab:CarbKotlin:2.3.20`. Full plugin JARs are build/upload artifacts,
+not Maven publications.
+
+## FlexibleItem (Paper)
+
+`me.xiaozhangup.carbkotlin.flexible` provides `FlexibleItem`, `FlexibleItemHandler`
+and the `flexibleItem` conversion functions. Crab owns only the shared registry
+and API; it has no built-in handlers or item-provider dependencies.
+
+WhaleMechanism registers the default handlers in `onLoad`, before plugins enter
+`onEnable`: `minecraft`, `craftengine` (`itemsadder` alias), `customfishing`,
+`head`, and `base64` (`bukkit` alias). Handler implementations live in
+`me.xiaozhangup.whale.util.flexible`. Existing handler order and item ID formats
+are preserved. Plugins can add handlers with `FlexibleItem.registerHandler(...)`.

@@ -1,7 +1,0 @@
-{
-  "id": "carbkotlin",
-  "name": "CarbKotlin",
-  "version": "${project.ext.kotlin_version}",
-  "main": "xyz.gmitch215.kotlinmc.Velocity",
-  "description": "${project.description}"
-}

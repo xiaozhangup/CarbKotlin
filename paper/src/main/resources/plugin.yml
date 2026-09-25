@@ -1,0 +1,9 @@
+name: CarbKotlin
+main: me.xiaozhangup.crab.CarbKotlin
+version: ${version}
+description: ${description}
+api-version: 1.21.4
+author: gmitch215
+load: STARTUP
+website: ${website}
+softdepend: [PlaceholderAPI, Vault]
