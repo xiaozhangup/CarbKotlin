@@ -5,20 +5,22 @@ compile-only artifact. Use classifier `velocity` instead for Velocity. Each full
 the runtime classes for that platform; consumers must not shade these packages.
 
 ```kotlin
-val crab = Crab(javaClass, ::getDataFolder) { nativePlugin }
+class ExamplePlugin : CrabPlugin() {
+    @Config("config.yml", autoReload = true)
+    lateinit var settings: Configuration
+        private set
 
-// Call during plugin initialization, before other code reads configuration.
-crab.loadConfigurations()
-
-@Config("config.yml", autoReload = true)
-lateinit var config: Configuration
-
-// Owned connection, subscriptions and lock renewal stop with crab.close().
-val redis by lazy { crab.redis(config.getConfigurationSection("redis")!!) }
-
-// Call after business shutdown/save operations.
-crab.close()
+    override fun enable() {
+        val redis = crab.redis(settings.getConfigurationSection("redis")!!)
+        // Use the connection; CrabPlugin closes it during shutdown.
+    }
+}
 ```
+
+`CrabPlugin` automatically binds the entry instance and loads annotated
+configurations before INIT and `load()`. Its hooks do not call
+`loadConfigurations()` or `close()` themselves. Standalone integrations using
+`Crab` directly retain those explicit operations.
 
 Configuration types and `@Config` live in `me.xiaozhangup.crab.configuration`.
 The existing section API, delegates, YAML comments and reload callbacks remain.
@@ -31,9 +33,10 @@ must switch to the appropriate server scheduler.
 scans only the owner's package and JAR, using that plugin's classloader.
 `Crab(nativePlugin, dataFolder)` binds the existing owner so instance fields and
 annotated methods reuse it; discovery never constructs another plugin entry. Business
-registration remains in the plugin. The shared command registry and explicit
-`crab.lifecycle` dispatcher reuse this scanner. Native Velocity listeners can be
-registered with `crab.registerEvents()`. See COMMANDS.md and CRAB.md.
+setup remains in plugin hooks. The command registry and lifecycle dispatcher reuse
+this scanner. `CrabPlugin` registers annotated commands and native Velocity
+listeners automatically; standalone integrations call the corresponding methods
+explicitly. See COMMANDS.md and CRAB.md.
 
 Redis types live in `me.xiaozhangup.crab.redis`. `connector.connection()`
 returns one shared connection facade per connector; ordinary operations borrow

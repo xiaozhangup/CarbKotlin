@@ -183,3 +183,24 @@ Whale 构建与本地 Maven 发布成功，产物上传至约定目录；完整�
 - 03:43:50 的节点查询确认 lobby、worker-1、worker-2、remote-1 全部在线；随后四端 `customrecipe list` 均返回 125 个配方，`pipes info` 均成功且没有孤立显示实体。
 - 与本轮重启前日志对照，未发现新增 WARN；资源包工作流警告继续按用户要求忽略。Lobby 仍有 PacketEvents 报出的 `EcoMode.packetSend(EcoMode.kt:207)` 空玩家异常（以 WARN 记录），同一堆栈在重启前 `2026-09-26-13.log.gz` 已出现 244 次，本轮按用户要求保留旧问题，没有扩大修改业务逻辑。此前 IdleDetector 修复仍包含在本轮构建中。
 - 验证覆盖构建、产物引用、启动、节点联通及上述查询；不代表全部游戏内交互均已逐项验收。没有新增测试单元，没有删除非 jar 文件。
+
+## CrabPlugin 生命周期基类（2026-09-26 04:06–04:10）
+
+- Paper、Velocity 分别提供同包名 `me.xiaozhangup.crab.CrabPlugin`。Paper 基类继承 JavaPlugin；Velocity 基类通过 Guice 成员注入提供 server/dataDirectory，并处理父类上的原生代理生命周期事件。原生入口仍使用 class。
+- 基类创建并绑定单个 Crab，统一执行 CONST、配置注入、INIT、LOAD、ENABLE、ACTIVE、DISABLE，注册注解命令、事件与 Paper 占位符，启动任务并在关闭时释放资源。四个业务钩子 load/enable/active/disable 均可选，不要求调用 super；平台回调不可覆写。
+- 迁移 11 个 Kotlin 插件：WhaleMechanism、SlimeCargoNext、SlimeMasterNext、Cubozoa、Tardigrade、Opossum、Raven、DolphinSync、OrangDomain、SharkChest、Spectator。业务直接写在 override 方法内，没有保留 *Plugin 转发方法；移除手动生命周期分发、配置初始化、重复资源关闭及 OrangDomain 的重复注解命令注册。原有顶层 internal Crab.kt 函数继续使用同一个实例。
+- 保持 Paper ACTIVE 延后一 tick、Velocity ACTIVE 由任务触发的调度方式；保留各自原有的 DISABLE 与业务关闭顺序。各业务钩子的内容与迁移前逐项核对；对 Bukkit 同名成员显式使用 Companion.config、Companion.saveConfig、Companion.reloadConfig，以保留原配置及保存行为。
+- CrabKotlin 与 11 个调用方构建成功，相关 API 已发布本地 Maven；Adapt 下游兼容性构建也通过。13 份运行 jar 上传完成：8 个 Paper 共享更新经 Lobby/plugins/update 与 U.sh 同步；Lobby 独有的 OrangDomain、SharkChest 直接替换；Master 的三个插件在停止后替换。没有提交、推送或新增测试单元。
+- 04:06:42 从 ma 广播 stop，04:06:44 关闭 Master，04:06:51 重新运行 Master Start.sh。
+
+| 节点 | 启动完成 | 核验安装 jar 数量 | ERROR 行数 |
+| --- | --- | --- | --- |
+| Master | 04:07:09 | 3 | 0 |
+| Lobby | 04:08:21 | 10 | 0 |
+| Worker-1 | 04:08:12 | 8 | 0 |
+| Worker-2 | 04:08:12 | 8 | 0 |
+| Worker-3 | 04:07:24 | 8 | 0 |
+
+- 37 份安装 jar 均与本地产物 SHA-256 一致，update 目录已消费。没有注入失败、生命周期重复执行、配置未初始化或类加载冲突；对照本轮重启前日志，未发现新增 WARN/异常消息。资源包工作流等已确认的旧问题保留。
+- 04:09:04 节点查询确认四个 Paper 节点在线；四端均返回 125 个自定义配方，Pipes 查询成功且没有孤立显示实体。Lobby 的 poly 命令正确返回帮助树，确认基类自动注册的注解命令可用。
+- 本轮验证覆盖构建、启动、初始化/激活及只读查询；新版本的关闭路径经代码核对，未为验证关闭路径额外安排第二次全服重启。未逐项验收全部游戏内交互。

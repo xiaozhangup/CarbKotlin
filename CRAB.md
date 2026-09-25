@@ -5,19 +5,57 @@ artifacts expose the same facade. No stack inspection or global default owner is
 used. The instance owns command registrations, task chains, ordinary scheduled
 tasks, configuration watchers and Redis connections.
 
-Paper plugins use a native `JavaPlugin` entry class and construct
-`internal val crab = Crab(this, dataFolder)`. Shared state is exposed from the
-main class's companion object; the companion's Crab getter forwards to the native
-instance. The native instance is bound to the scanner, so configuration and
-lifecycle callbacks do not construct another plugin instance.
+## Plugin entry point
 
-Both platform constructors queue tasks until the plugin calls `crab.start()`.
-Paper `onLoad` dispatches CONST, INIT and LOAD, then business loading. INIT loads
-annotated configurations. `onEnable` dispatches ENABLE, registers Crab event listeners and placeholder
-expansions before business setup, starts queued tasks,
-and schedules ACTIVE plus business activation one tick later. `onDisable`
-dispatches DISABLE and business shutdown in nested finally blocks, then closes
-Crab even if a callback fails.
+Both platform artifacts expose `me.xiaozhangup.crab.CrabPlugin`. Paper's base
+extends `JavaPlugin`; Velocity's base owns Guice injection and proxy event hooks.
+Consumer entry classes need no Crab construction, lifecycle dispatch, event
+registration or resource closure:
+
+```kotlin
+class ExamplePlugin : CrabPlugin() {
+    override fun load() {
+        // Annotated configurations are already available.
+    }
+
+    override fun enable() {
+        crab.command("example") { /* command DSL */ }
+    }
+
+    override fun active() {
+        // Business activation after enable.
+    }
+
+    override fun disable() {
+        // Finish business saves; Crab is closed afterwards, even on failure.
+    }
+}
+```
+
+All four hooks are optional, protected and default to no-op. Do not call `super`.
+Native entry callbacks are final. The base exposes one `crab` instance, binds the
+actual entry to its scanner, and automatically loads `@Config` fields, registers
+Crab listeners, Paper placeholder expansions and `@CommandHeader` commands,
+starts queued tasks and releases owned resources.
+
+Paper dispatches CONST, loads configurations, then dispatches INIT and LOAD
+before `load()`. ENABLE, listener/placeholder/annotated-command registration and
+`enable()` precede task startup. ACTIVE and `active()` run one tick later.
+Shutdown dispatches DISABLE, calls `disable()` and closes Crab using nested
+finally blocks.
+
+Velocity supplies inherited `server: ProxyServer` and `dataDirectory: Path`.
+Guice fills these and runs CONST/configuration loading/INIT after the subclass
+constructor has completed. Access injected services from lifecycle hooks, not
+constructor initializers. Proxy initialization dispatches LOAD/`load()`, then
+ENABLE/annotated commands/`enable()`, registers listeners and starts queued tasks.
+ACTIVE/`active()` run as an owned task, preserving the previous scheduling.
+Shutdown calls `disable()`, dispatches DISABLE in a finally block and closes Crab.
+Its native `@Subscribe` methods are inherited and registered once by Velocity.
+
+Plugins may retain a companion `instance` for project-local helpers and shared
+business state. Set it in `init { instance = this }`; the base does not invoke
+business hooks from its constructor.
 
 ```kotlin
 crab.command("example") { /* existing DSL */ }
@@ -33,7 +71,7 @@ Each consumer has exactly one `util/ext/Crab.kt` or `utils/ext/Crab.kt` in its o
 `internal` top-level `command`, `submitTask`, `submitAsyncTask` and `submitChain`
 forwarders with the full parameters/defaults. Other Kotlin modules cannot import
 these helpers; they must use their own facade. JVM reflection/Java visibility is
-not restricted. Each plugin's `crab` property is also internal.
+not restricted. The inherited `crab` property is public; project-local top-level wrappers remain `internal`.
 
 ## Scheduling and shutdown
 
@@ -55,28 +93,24 @@ its internal `submitSerialTask`; Crab tracks/cancels these futures as well. Exis
 specialized coroutine scopes (`submitScope`) and direct entity/region scheduling
 are separate facilities and retain their existing behavior.
 
-## Explicit lifecycle dispatch
+## Lifecycle annotations and manual integration
 
-`crab.lifecycle` is a platform-neutral `Lifecycle` utility built on the owning
-plugin's scanner. It installs no platform hooks. Plugins explicitly call
-`crab.lifecycle.run(LifeCycle.INIT)` (and LOAD, ENABLE, ACTIVE, DISABLE as needed).
-Use `me.xiaozhangup.crab.lifecycle.Awake` on no-argument methods; lower
-`priority` numbers execute first, with scanner order breaking ties. Each stage
-executes once. Discovery reads bytecode without constructing every class; owners
-are resolved only when their annotated method runs. This makes `SkipTo` unnecessary
-for objects that are explicitly initialized by their plugin.
+`CrabPlugin` drives `crab.lifecycle` automatically. Use
+`me.xiaozhangup.crab.lifecycle.Awake` on no-argument methods; lower `priority`
+numbers execute first, with scanner order breaking ties. Each stage executes
+once. Discovery reads bytecode without constructing every class; owners are
+resolved only when their annotated method runs. DISABLE collects handler
+exceptions so one failure does not skip the remaining handlers.
 
-Cubozoa and SlimeMasterNext are native Velocity entry classes themselves.
-Their companion objects expose `instance`, shared configuration/services/world state,
-and a `server` getter backed by the injected instance. Member initialization creates
-`Crab(this, dataDirectory.toFile())`, which binds that same instance for configuration
-injection and lifecycle callbacks. After members have initialized, the constructor
-sets `instance` and dispatches CONST/INIT (including configuration loading).
-ProxyInitializeEvent dispatches LOAD, onLoad, ENABLE, onEnable, then registers
-listeners and starts queued tasks. ACTIVE/onActive run as an owned task.
-ProxyShutdownEvent performs business shutdown, dispatches all DISABLE handlers
-in a finally block, then closes Crab. DISABLE collects handler exceptions so one
-failure does not skip remaining cleanup. Paper plugins also use Crab lifecycle annotations and explicitly dispatch their stages.
+Do not manually dispatch stages, reload all annotated configurations, register
+all annotated commands/listeners or close Crab from a `CrabPlugin` hook. Those
+operations are owned by the base. Per-object dynamic registrations still use
+`crab` directly. Specialized business resources remain the plugin's responsibility.
+
+The standalone `Crab` and platform-neutral `Lifecycle` utility remain available
+for native integrations that cannot extend `CrabPlugin`. Such integrations still
+construct/bind their Crab and explicitly drive initialization and shutdown.
+The utility itself installs no platform hooks.
 
 ## Native Velocity services
 

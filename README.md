@@ -27,7 +27,10 @@ contains the common and selected platform API, not the bundled Kotlin runtime.
 
 ## Unified calls
 
-Each plugin holds one `Crab` instance and uses module-local top-level wrappers:
+Plugins extend `me.xiaozhangup.crab.CrabPlugin` and override `load()`, `enable()`,
+`active()` or `disable()` as needed. The base owns initialization, annotated configuration,
+commands/listeners, task startup and resource cleanup on both platforms. Each plugin
+uses its inherited `crab` instance and module-local top-level wrappers:
 
 ```kotlin
 command("example") { /* command DSL */ }
