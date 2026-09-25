@@ -1,16 +1,25 @@
 package me.xiaozhangup.crab.flexible
 
+import me.xiaozhangup.crab.flexible.handler.Base64Handler
+import me.xiaozhangup.crab.flexible.handler.MinecraftHandler
+import me.xiaozhangup.crab.flexible.handler.PlayerHeadHandler
+
 import org.bukkit.inventory.ItemStack
 import org.bukkit.Bukkit
 import kotlin.jvm.optionals.getOrNull
 
 object FlexibleItem {
     private val flexibleItem = mutableMapOf<String, FlexibleItemHandler>()
+    private val builtInHandlers = listOf(MinecraftHandler, PlayerHeadHandler)
 
     fun getItemStack(item: String): ItemStack? {
         val handler = when (val namespace = item.substringBefore(':')) {
             "base64", "bukkit" -> Base64Handler
-            else -> flexibleItem[namespace]
+            else -> flexibleItem[namespace] ?: when (namespace) {
+                "minecraft" -> MinecraftHandler
+                "head" -> PlayerHeadHandler
+                else -> null
+            }
         }
         val stack = handler?.getStack(item.substringAfter(':'))?.getOrNull()
         if (stack == null) {
@@ -33,6 +42,10 @@ object FlexibleItem {
             }
         }
 
+        for (handler in builtInHandlers) {
+            val name = handler.getName(itemStack).getOrNull()
+            if (name != null) return "${handler.getNamespace()}:$name"
+        }
         return null
     }
 

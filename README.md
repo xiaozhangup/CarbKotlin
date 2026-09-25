@@ -59,13 +59,42 @@ not Maven publications.
 
 `me.xiaozhangup.crab.flexible` provides `FlexibleItem`, `FlexibleItemHandler`
 and the `flexibleItem` conversion functions. Crab owns the shared registry and API,
-plus a built-in `base64` handler (`bukkit` alias). Base64 is kept outside the
-registry and used only after all registered handlers decline an item, regardless
-of registration order. Explicit `toFlexibleItem(item, false)` returns `null`
-when no registered handler matches. Base64 decoding is available without Whale.
+and supplies `minecraft`, `head`, and `base64` (`bukkit` alias) without Whale.
+Built-in handlers are available on first use and need no lifecycle registration.
 
-WhaleMechanism registers the default handlers in `onLoad`, before plugins enter
-`onEnable`: `minecraft`, `craftengine` (`itemsadder` alias), `customfishing`,
-`head`. These item-provider implementations live in
-`me.xiaozhangup.whale.util.flexible`. Existing item ID formats are preserved.
-Plugins can add handlers with `FlexibleItem.registerHandler(...)`.
+Explicit custom namespaces use their registered handler. Reverse conversion checks
+registered handlers first, then the built-in Minecraft and player-head handlers.
+Base64 is used only when all of those decline an item; `toFlexibleItem(item, false)`
+returns `null` in that case. The existing material, head texture/owner and Base64
+formats are preserved.
+
+WhaleMechanism registers `craftengine` (`itemsadder` alias) and `customfishing`
+in `onLoad`, before plugins enter `onEnable`. These provider integrations remain in
+`me.xiaozhangup.whale.util.flexible.handler`. Plugins can add handlers with
+`FlexibleItem.registerHandler(...)`.
+
+## Shared binary codecs
+
+`me.xiaozhangup.crab.serialization` in `common` provides `ByteReader`, `ByteWriter`,
+the two `byteArray` functions and `UUIDSerializable` on both Paper and Velocity.
+The format retains big-endian primitives, UTF-8 strings with a four-byte length,
+UUIDs as two longs, collection/map element counts and optional GZIP compression.
+Adventure components keep the existing Gson JSON representation; UUID JSON values
+remain strings. This does not change ItemStack serialization formats.
+
+```kotlin
+import me.xiaozhangup.crab.serialization.byteArray
+
+val bytes = byteArray { writeString("example"); writeInt(42) }
+val result = byteArray(bytes) { readString() to readInt() }
+```
+
+Island, user and showcase codecs remain in SlimeCargoNext and SlimeMasterNext,
+each in `utils/ByteArrayUtils.kt`, as extensions on the shared reader/writer.
+Crab has no dependency on those domain objects.
+
+Consumers must import these codecs from Crab directly. The former Whale, Cargo,
+Master and Cubozoa codec implementations and the duplicated UUID serializers in
+Master, Opossum and OrangDomain have been removed; plugins
+compiled against them must be rebuilt. This also applies to callbacks exposed by
+Whale's message and metadata APIs, whose receiver types now come from Crab.

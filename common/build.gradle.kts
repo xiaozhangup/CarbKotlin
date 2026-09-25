@@ -72,5 +72,6 @@ dependencies {
     compileOnly("net.kyori:adventure-text-minimessage:5.2.0")
     compileOnly("net.kyori:adventure-text-serializer-legacy:5.2.0")
     compileOnly("net.kyori:adventure-text-serializer-plain:5.2.0")
+    compileOnly("net.kyori:adventure-text-serializer-gson:5.2.0")
 }
 

@@ -204,3 +204,24 @@ Whale 构建与本地 Maven 发布成功，产物上传至约定目录；完整�
 - 37 份安装 jar 均与本地产物 SHA-256 一致，update 目录已消费。没有注入失败、生命周期重复执行、配置未初始化或类加载冲突；对照本轮重启前日志，未发现新增 WARN/异常消息。资源包工作流等已确认的旧问题保留。
 - 04:09:04 节点查询确认四个 Paper 节点在线；四端均返回 125 个自定义配方，Pipes 查询成功且没有孤立显示实体。Lobby 的 poly 命令正确返回帮助树，确认基类自动注册的注解命令可用。
 - 本轮验证覆盖构建、启动、初始化/激活及只读查询；新版本的关闭路径经代码核对，未为验证关闭路径额外安排第二次全服重启。未逐项验收全部游戏内交互。
+
+## 编解码与 FlexibleItem 处理器下沉（2026-09-26 04:56–05:03）
+
+- 本轮沿用会话内已验证的 CrabKotlin、SlimeCargoNext、WhaleMechanism、Opossum、Tardigrade、Spectator、SharkChest 构建，部署前补跑 SharkChest 构建（通过）；8 份上传产物均按 SHA-256 核对。Crab 运行包区分 Paper/Velocity，安装名仍为 `CrabKotlin-2.3.20.jar`。
+- 6 个共享 Paper 插件通过 Lobby/plugins/update 与 `sh ./U.sh sc update q` 分发，24 份暂存哈希一致；SharkChest 仅在 Lobby 原子替换。Master 仅替换 Velocity 版 Crab。五端原有 update 目录均为空，没有覆盖其他更新批次。
+- 04:56:06 由 ma 广播 stop，04:56:19 关闭 Master；确认旧 PID 退出后替换 Master Crab，04:57:05 执行 Start.sh。启动完成时间：Worker-3 04:56:51、Master 04:57:22、Worker-2 04:57:37、Worker-1 04:57:38、Lobby 04:57:44。
+- 26 份实际安装 jar 哈希均与清单一致，五端 update 均已消费。未发现缺类、缺方法或 classloader 冲突。三台 s1 Paper 的预期插件已启用；04:58:08 均返回 125 个自定义配方，04:59:27 Pipes 查询均返回没有孤立显示实体。
+- Worker-3 在 Master 未就绪时首次连接被拒绝，未自动重连，继而出现 `SlimeService.getChannel` 空指针，Whale 的 BiliBili/Teleport 初始化失败及 Spectator 任务异常。04:58:07 Master 节点查询只有 lobby、worker-1、worker-2 在线。用户随后通过已有托管面板重启 Worker-3，05:00:58 完成第二次启动；上述连接及初始化异常没有再出现，BiliBili 视频列表也已成功加载。没有新增控制通道或改动连接代码。
+- 05:02:57 Master 查询确认 lobby、worker-1、worker-2、remote-1 全部在线；定向发送给 remote-1 的 `customrecipe list` 实际返回 125 个配方，`pipes info` 返回没有孤立显示实体。最终复查 26 份安装 jar 哈希仍全部一致，五端 update 为空。
+- 其余节点对比本轮重启前日志没有新增警告类型。Lobby 的 `EcoMode.packetSend(EcoMode.kt:207)` 空玩家异常、Worker 的 CraftEngine `Unknown resource pack: default` 均在重启前存在；没有按 ERROR 为零将这些 WARN/异常判为通过。
+- 未提交推送，未新增测试单元，未清理上传文件；未删除非 jar 文件。客户端交互及新版本关闭路径未逐项验收。
+
+## 补齐代理端编解码迁移（2026-09-26 05:10 起）
+
+- SlimeMasterNext、Cubozoa 删除重复的基础 ByteReader/ByteWriter/byteArray，直接使用 Crab common；Master、Opossum、OrangDomain 删除重复 UUIDSerializable。当前工作区只保留 Crab 的这套共享实现。
+- Master 的岛屿、用户、展示信息读写方法改为共享 reader/writer 上的扩展，保留在 `utils/ByteArrayUtils.kt`；Cargo 的 `DomainSerialization.kt` 同步改名为 `ByteArrayUtils.kt`。静态对比确认 Master 六个业务函数体不变、基础编解码与 Crab 一致，Cubozoa 与 Crab 一致（Crab 额外提供 remaining）。
+- SlimeMasterNext、SlimeCargoNext、Cubozoa、Opossum、OrangDomain 均构建通过，Master/Cargo API 已发布本地 Maven。五份运行产物的描述符、旧编解码字节码引用检查通过，并上传校验。
+- Cargo/Opossum 经 Lobby update 与 U.sh 分发，OrangDomain 仅替换 Lobby，Master 停止后替换 SlimeMasterNext/Cubozoa。05:10:42 广播 stop；本轮临时脚本将日志字节偏移用于字符串切片，未识别停服回执，因此先保留 Master。重新核实回执后，05:10:56 shutdown，05:11:03 Start.sh，05:11:22 Master 启动完成。11 份安装哈希一致，update 均已消费。
+- Worker-3 于 05:11:17 连接尚未就绪的 Master，被拒绝后出现与上轮相同的 channel/模块初始化异常；05:11:23 启动完成但未联网。已请用户通过已有面板再次重启，待完成重新启动后的联通与查询验收；没有修改连接代码或增加控制通道。
+- Worker-2 05:12:12、Worker-1 05:12:13、Lobby 05:12:18 完成启动；05:13:02 Master 确认这三个节点在线。三端 `customrecipe list` 均返回 125 个配方、`pipes info` 均返回没有孤立显示实体，Lobby `poly` 返回 Usage。对照重启前日志，Master 和这三个 Paper 节点没有新增 WARN/ERROR 类型，既有 EcoMode 与 CraftEngine 问题仍保留。
+- 未新增测试单元，未提交推送，未清理上传文件，未删除非 jar 文件；客户端交互未逐项验收。

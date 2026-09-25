@@ -1,5 +1,6 @@
-package me.xiaozhangup.crab.flexible
+package me.xiaozhangup.crab.flexible.handler
 
+import me.xiaozhangup.crab.flexible.FlexibleItemHandler
 import org.bukkit.inventory.ItemStack
 import java.util.*
 
