@@ -1,6 +1,6 @@
 # Per-plugin Crab facade
 
-Each plugin owns exactly one `me.xiaozhangup.carbkotlin.Crab`. Both platform
+Each plugin owns exactly one `me.xiaozhangup.carb.Crab`. Both platform
 artifacts expose the same facade. No stack inspection or global default owner is
 used. The instance owns command registrations, task chains, ordinary scheduled
 tasks, configuration watchers and Redis connections.
@@ -60,7 +60,7 @@ are separate facilities and retain their existing behavior.
 `crab.lifecycle` is a platform-neutral `Lifecycle` utility built on the owning
 plugin's scanner. It installs no platform hooks. Plugins explicitly call
 `crab.lifecycle.run(LifeCycle.INIT)` (and LOAD, ENABLE, ACTIVE, DISABLE as needed).
-Use `me.xiaozhangup.carbkotlin.lifecycle.Awake` on no-argument methods; lower
+Use `me.xiaozhangup.carb.lifecycle.Awake` on no-argument methods; lower
 `priority` numbers execute first, with scanner order breaking ties. Each stage
 executes once. Discovery reads bytecode without constructing every class; owners
 are resolved only when their annotated method runs. This makes `SkipTo` unnecessary
@@ -107,7 +107,7 @@ The native main class is already registered as an event listener by Velocity;
 
 ## Native Paper services
 
-- `crab.registerEvents()` scans only `me.xiaozhangup.carbkotlin.event.SubscribeEvent`.
+- `crab.registerEvents()` scans only `me.xiaozhangup.carb.event.SubscribeEvent`.
   The annotation uses Bukkit `EventPriority` and `ignoreCancelled`. Existing native
   `@EventHandler` listeners keep their explicit registration, avoiding duplicates.
 - `CrabEvent` supplies cancellation and `call()` for shared plugin events. Each
@@ -130,7 +130,7 @@ embedded by consumers.
 
 ### Paper 物品构建
 
-`me.xiaozhangup.carbkotlin.util.itemStack` 和 `ItemStackBuilder` 来自 Whale 的 Adventure 构建器，支持 Material、现有 ItemStack 和 FlexibleItem 标识。字符串 `name` / `lore` 使用 MiniMessage，并默认关闭斜体；Component 和 adventure-kt DSL 重载保持可用。
+`me.xiaozhangup.carb.util.itemStack` 和 `ItemStackBuilder` 来自 Whale 的 Adventure 构建器，支持 Material、现有 ItemStack 和 FlexibleItem 标识。字符串 `name` / `lore` 使用 MiniMessage，并默认关闭斜体；Component 和 adventure-kt DSL 重载保持可用。
 
 ```kotlin
 itemStack(Material.DIAMOND) {

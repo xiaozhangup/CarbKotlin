@@ -47,7 +47,7 @@ val apiJar = tasks.register<Jar>("apiJar") {
     archiveClassifier.set("api-paper")
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from(sourceSets.main.get().output) {
-        include("me/xiaozhangup/carbkotlin/**", "META-INF/*.kotlin_module")
+        include("me/xiaozhangup/carb/**", "META-INF/*.kotlin_module")
     }
     from(commonSources.named("main").map { it.output })
     from(common.configurations.named("databaseApi").map { config -> config.map { zipTree(it) } }) {

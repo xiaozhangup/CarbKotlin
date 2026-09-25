@@ -153,3 +153,13 @@ Whale 构建与本地 Maven 发布成功，产物上传至约定目录；完整�
 - 执行只读 `season world`：四端均成功经过 `plainMini` 调用共享 adventure-kt 并输出中文文本，Lobby 返回世界未启用季节，三个 Worker 返回季节信息。
 - 查询同时暴露一个旧缺陷：Worker-1 在输出时间时抛出 `PatternSyntaxException: Illegal octal escape sequence`；Worker-2/3 的时间占位符未替换。`TimeManager.kt:175` 等代码把实际秒/分钟/小时数插入正则，而非匹配字面的 `$seconds$`、`$minutes$`、`$hours$`。更新前后 `TimeManager.class` SHA-256 完全相同（`b1f3989a0302b9ffcb4ea9fde6485fcecd8dbdff5ea452c80f7d67f1366d66da`），确认缺陷已存在于旧包。本轮没有扩大修改该业务代码；Worker-1 因本次查询新增 1 条 ERROR，其余三端 ERROR 为 0。
 - 验证仅覆盖启动、依赖调用及查询；没有改变季节、时间、配置或玩家数据，未进行客户端季节视觉验收。
+
+## 统一源码包名为 me.xiaozhangup.carb（2026-09-26 02:38–02:41）
+
+- Crab 的 common、paper、velocity 源码及入口统一到 `me.xiaozhangup.carb`；同步更新插件描述文件、API 打包路径和文档。Maven 坐标继续使用已约定的 `me.xiaozhangup.crab:CarbKotlin:2.3.20:paper/velocity`。
+- 同步修改 12 个调用方：SlimeCargoNext、SlimeMasterNext、WhaleMechanism、Cubozoa、Opossum、Raven、Tardigrade、DolphinSync、OrangDomain、Pipes、SharkChest、Spectator。共 13 个项目、704 个文本文件更新，Crab 253 个源码文件迁移目录。
+- 全部项目构建成功，相关 API 已发布本地 Maven；14 份运行 jar 均上传。当前源码及产物未检出旧源码包名前缀。扫描已安装插件的字节码未发现额外调用方，运行配置和脚本未发现旧包名引用。
+- 9 个共享插件通过 Lobby/plugins/update 和 U.sh 同步；Lobby 的 OrangDomain、SharkChest 直接替换。02:38:17 从 ma 广播 stop，02:38:19 停止 Master，替换 Master 的 Crab、Cubozoa、SlimeMaster 后于 02:38:25 重新运行 Start.sh。本轮未额外创建备份。
+- 启动完成：Master 02:38:42、Worker-3 02:39:01、Worker-1 02:39:47、Worker-2 02:39:48、Lobby 02:39:56。Master 3 个、Lobby 11 个、每个 Worker 9 个安装 jar 均与本地产物 SHA-256 一致，待更新目录已消费。
+- 截至复查，五端 ERROR 均为 0，无旧包名类缺失、方法缺失、类加载冲突或 Unit 初始化错误。四个 Paper 节点全部在线；四端 customrecipe list 返回 125 个配方，pipes info 返回成功且无孤立显示实体。仅保留已有兼容/更新提示，资源包工作流警告按用户要求忽略。
+- 已部署的根目录上传 jar 随后清理；没有删除非 jar 文件，没有新增测试单元。验证覆盖构建、包名引用、启动及上述查询，不代表所有游戏内交互已逐项验收。

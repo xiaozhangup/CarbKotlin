@@ -2,6 +2,6 @@
   "id": "carbkotlin",
   "name": "CarbKotlin",
   "version": "${version}",
-  "main": "me.xiaozhangup.crab.CarbKotlin",
+  "main": "me.xiaozhangup.carb.CarbKotlin",
   "description": "${description}"
 }

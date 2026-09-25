@@ -1,6 +1,6 @@
 # Shared database DSL
 
-`me.xiaozhangup.carbkotlin.database` contains the database module from
+`me.xiaozhangup.carb.database` contains the database module from
 `io.izzel.taboolib:database:6.3.0-test-6-23-1`. The SQL DSL, SQL generation,
 result processing, indexes, transactions and MySQL / SQLite / PostgreSQL
 types are retained. Configuration and lifecycle integration are independent

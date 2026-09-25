@@ -1,6 +1,6 @@
 # Task chains
 
-The common `me.xiaozhangup.carbkotlin.chain` DSL retains `async`, `sync`,
+The common `me.xiaozhangup.carb.chain` DSL retains `async`, `sync`,
 `wait`, repeating blocks and `Cancellable.cancel()`. `submitChain` returns a
 CompletableFuture. Failure completes it exceptionally; cancelling the future
 cancels its coroutine and repeating tasks.

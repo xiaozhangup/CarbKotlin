@@ -20,7 +20,7 @@ val redis by lazy { crab.redis(config.getConfigurationSection("redis")!!) }
 crab.close()
 ```
 
-Configuration types and `@Config` live in `me.xiaozhangup.carbkotlin.configuration`.
+Configuration types and `@Config` live in `me.xiaozhangup.carb.configuration`.
 The existing section API, delegates, YAML comments and reload callbacks remain.
 `migrate = true` copies missing defaults without overwriting configured values.
 File auto-reload polls modification time and length every 500 ms and runs callbacks
@@ -35,7 +35,7 @@ registration remains in the plugin. The shared command registry and explicit
 `crab.lifecycle` dispatcher reuse this scanner. Native Velocity listeners can be
 registered with `crab.registerEvents()`. See COMMANDS.md and CRAB.md.
 
-Redis types live in `me.xiaozhangup.carbkotlin.redis`. `connector.connection()`
+Redis types live in `me.xiaozhangup.carb.redis`. `connector.connection()`
 returns one shared connection facade per connector; ordinary operations borrow
 and return a pooled client. Each connector owns its subscriptions and lock renewal.
 Locks retain the `taboo_redis_lock__lock` key prefix and use per-owner tokens.

@@ -54,7 +54,7 @@ not Maven publications.
 
 ## FlexibleItem (Paper)
 
-`me.xiaozhangup.carbkotlin.flexible` provides `FlexibleItem`, `FlexibleItemHandler`
+`me.xiaozhangup.carb.flexible` provides `FlexibleItem`, `FlexibleItemHandler`
 and the `flexibleItem` conversion functions. Crab owns only the shared registry
 and API; it has no built-in handlers or item-provider dependencies.
 

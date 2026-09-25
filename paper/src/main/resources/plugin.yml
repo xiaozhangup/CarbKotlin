@@ -1,5 +1,5 @@
 name: CarbKotlin
-main: me.xiaozhangup.crab.CarbKotlin
+main: me.xiaozhangup.carb.CarbKotlin
 version: ${version}
 description: ${description}
 api-version: 1.21.4
