@@ -8,7 +8,11 @@ object FlexibleItem {
     private val flexibleItem = mutableMapOf<String, FlexibleItemHandler>()
 
     fun getItemStack(item: String): ItemStack? {
-        val stack = flexibleItem[item.substringBefore(':')]?.getStack(item.substringAfter(':'))?.getOrNull()
+        val handler = when (val namespace = item.substringBefore(':')) {
+            "base64", "bukkit" -> Base64Handler
+            else -> flexibleItem[namespace]
+        }
+        val stack = handler?.getStack(item.substringAfter(':'))?.getOrNull()
         if (stack == null) {
             Bukkit.getLogger().warning("[FlexibleItem] Can't find item \"$item\"")
         }
@@ -16,9 +20,8 @@ object FlexibleItem {
     }
 
     fun toFlexibleItem(itemStack: ItemStack): String {
-        return checkNotNull(toFlexibleItem(itemStack, useBase64 = false)) {
-            "No FlexibleItem handler can serialize ${itemStack.type}"
-        }
+        return toFlexibleItem(itemStack, useBase64 = false)
+            ?: "base64:${Base64Handler.getName(itemStack).get()}"
     }
 
     fun toFlexibleItem(itemStack: ItemStack, useBase64: Boolean = false): String? {

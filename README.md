@@ -55,11 +55,14 @@ not Maven publications.
 ## FlexibleItem (Paper)
 
 `me.xiaozhangup.carb.flexible` provides `FlexibleItem`, `FlexibleItemHandler`
-and the `flexibleItem` conversion functions. Crab owns only the shared registry
-and API; it has no built-in handlers or item-provider dependencies.
+and the `flexibleItem` conversion functions. Crab owns the shared registry and API,
+plus a built-in `base64` handler (`bukkit` alias). Base64 is kept outside the
+registry and used only after all registered handlers decline an item, regardless
+of registration order. Explicit `toFlexibleItem(item, false)` returns `null`
+when no registered handler matches. Base64 decoding is available without Whale.
 
 WhaleMechanism registers the default handlers in `onLoad`, before plugins enter
 `onEnable`: `minecraft`, `craftengine` (`itemsadder` alias), `customfishing`,
-`head`, and `base64` (`bukkit` alias). Handler implementations live in
-`me.xiaozhangup.whale.util.flexible`. Existing handler order and item ID formats
-are preserved. Plugins can add handlers with `FlexibleItem.registerHandler(...)`.
+`head`. These item-provider implementations live in
+`me.xiaozhangup.whale.util.flexible`. Existing item ID formats are preserved.
+Plugins can add handlers with `FlexibleItem.registerHandler(...)`.
