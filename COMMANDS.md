@@ -1,6 +1,6 @@
 # Shared commands and Notify
 
-`me.xiaozhangup.carb.command` contains one command tree, argument parser,
+`me.xiaozhangup.crab.command` contains one command tree, argument parser,
 executor binding, completion, annotation API and CommandHelper implementation.
 The common module has no Bukkit or Velocity imports; each platform artifact adds
 its own implementation under the same public package.
@@ -16,8 +16,8 @@ previous TabooLib behavior: an empty root permission allows all senders; explici
 permissions are resolved by Velocity (Bukkit OP defaults do not apply there).
 
 ```kotlin
-import me.xiaozhangup.carb.command.Notify
-import me.xiaozhangup.carb.command.createHelper
+import me.xiaozhangup.crab.command.Notify
+import me.xiaozhangup.crab.command.createHelper
 
 val notify = Notify("示例", "#99ccee")
 crab.command("example", permission = "example.use", notify = notify) {
@@ -39,7 +39,7 @@ Executors receive native platform types, without TabooLib ProxyPlayer/ProxyComma
 `context.sender()` exposes the common Adventure Audience; the typed executor
 parameter retains Player/CommandSender/CommandSource.
 
-Player lookup extensions are in `me.xiaozhangup.carb.command` on both platforms. World and
+Player lookup extensions are in `me.xiaozhangup.crab.command` on both platforms. World and
 coordinate helpers are Paper-only. Player-name completion is shared and delegates
 to the registry's platform. `createHelper` and `createDescriptionHelper` use the
 same common implementation on both platforms, with Notify when supplied.
@@ -54,7 +54,7 @@ handled in the same way as before.
 ## Notify
 
 `Notify` is an open class. Prefix, body/argument colours, MiniMessage formatting,
-`build(...)` and `send(Audience, ...)` live in CarbKotlin. It can also be used outside
+`build(...)` and `send(Audience, ...)` live in CrabKotlin. It can also be used outside
 commands. Whale's existing `util.chat.Notify` subclasses it and adds only the
 `send(NetworkPlayer, ...)` overload. Cubozoa uses the common class directly.
 

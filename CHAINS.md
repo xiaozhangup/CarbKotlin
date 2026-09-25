@@ -1,6 +1,6 @@
 # Task chains
 
-The common `me.xiaozhangup.carb.chain` DSL retains `async`, `sync`,
+The common `me.xiaozhangup.crab.chain` DSL retains `async`, `sync`,
 `wait`, repeating blocks and `Cancellable.cancel()`. `submitChain` returns a
 CompletableFuture. Failure completes it exceptionally; cancelling the future
 cancels its coroutine and repeating tasks.
@@ -34,5 +34,5 @@ cleanup that assumes a live server main thread. Cancellation is cooperative and
 does not interrupt an already-running synchronous business function.
 
 The API follows TabooLib basic-submit-chain 6.3.0-test-6-23-1 (MIT). The scheduling
-and coroutine ownership implementation is adapted for CarbKotlin. The MIT license
+and coroutine ownership implementation is adapted for CrabKotlin. The MIT license
 is included at META-INF/licenses/TabooLib-command-LICENSE.txt.

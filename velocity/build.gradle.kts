@@ -9,7 +9,7 @@ plugins {
 evaluationDependsOn(":common")
 val common = project(":common")
 val commonSources = common.extensions.getByType<SourceSetContainer>()
-val artifactName = "CarbKotlin"
+val artifactName = "CrabKotlin"
 base.archivesName.set(artifactName)
 
 dependencies {
@@ -21,7 +21,7 @@ tasks.processResources {
     inputs.property("version", project.version)
     filesMatching(listOf("plugin.yml", "velocity-plugin.json")) {
         expand("version" to project.version, "description" to project.description!!,
-            "website" to "https://github.com/xiaozhangup/CarbKotlin")
+            "website" to "https://github.com/xiaozhangup/CrabKotlin")
     }
 }
 
@@ -38,7 +38,7 @@ val apiJar = tasks.register<Jar>("apiJar") {
     archiveClassifier.set("api-velocity")
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from(sourceSets.main.get().output) {
-        include("me/xiaozhangup/carb/**", "META-INF/*.kotlin_module")
+        include("me/xiaozhangup/crab/**", "META-INF/*.kotlin_module")
     }
     from(commonSources.named("main").map { it.output })
     from(common.configurations.named("databaseApi").map { config -> config.map { zipTree(it) } }) {

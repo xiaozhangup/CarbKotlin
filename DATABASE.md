@@ -1,6 +1,6 @@
 # Shared database DSL
 
-`me.xiaozhangup.carb.database` contains the database module from
+`me.xiaozhangup.crab.database` contains the database module from
 `io.izzel.taboolib:database:6.3.0-test-6-23-1`. The SQL DSL, SQL generation,
 result processing, indexes, transactions and MySQL / SQLite / PostgreSQL
 types are retained. Configuration and lifecycle integration are independent
@@ -10,15 +10,15 @@ of TabooLib. The upstream MIT license is included in both artifacts under
 ## Plugin dependency
 
 ```kotlin
-compileOnly("me.xiaozhangup.crab:CarbKotlin:2.3.20:paper") {
+compileOnly("me.xiaozhangup.crab:CrabKotlin:2.3.20:paper") {
     isTransitive = false
 }
 ```
 
-Declare CarbKotlin as a required plugin dependency. The `api` artifact is
+Declare CrabKotlin as a required plugin dependency. The `api` artifact is
 only for compilation: it contains the database classes and the Hikari types
 used in their signatures, without Kotlin runtimes or JDBC drivers. Deploy
-only the normal `CarbKotlin-2.3.20.jar`; it supplies the runtime for all plugins.
+only the normal `CrabKotlin-2.3.20.jar`; it supplies the runtime for all plugins.
 Build and publish both artifacts with `sh gradlew build publishToMavenLocal`.
 
 ## Connection ownership

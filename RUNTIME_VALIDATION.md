@@ -163,3 +163,23 @@ Whale 构建与本地 Maven 发布成功，产物上传至约定目录；完整�
 - 启动完成：Master 02:38:42、Worker-3 02:39:01、Worker-1 02:39:47、Worker-2 02:39:48、Lobby 02:39:56。Master 3 个、Lobby 11 个、每个 Worker 9 个安装 jar 均与本地产物 SHA-256 一致，待更新目录已消费。
 - 截至复查，五端 ERROR 均为 0，无旧包名类缺失、方法缺失、类加载冲突或 Unit 初始化错误。四个 Paper 节点全部在线；四端 customrecipe list 返回 125 个配方，pipes info 返回成功且无孤立显示实体。仅保留已有兼容/更新提示，资源包工作流警告按用户要求忽略。
 - 已部署的根目录上传 jar 随后清理；没有删除非 jar 文件，没有新增测试单元。验证覆盖构建、包名引用、启动及上述查询，不代表所有游戏内交互已逐项验收。
+
+## 统一 CrabKotlin 拼写并全服重启（2026-09-26 03:41–03:45）
+
+- 项目目录、GitHub 仓库、插件名、入口类及 Maven artifactId 统一为 `CrabKotlin`；源码包名统一为 `me.xiaozhangup.crab`，Velocity 插件 ID 为 `crabkotlin`。坐标为 `me.xiaozhangup.crab:CrabKotlin:2.3.20:paper/velocity`，继续关闭调用方的依赖传递。历史验证记录保留当时名称。
+- CrabKotlin 及 14 个调用方完成构建：WhaleMechanism、SlimeCargoNext、SlimeMasterNext、Cubozoa、Opossum、Raven、Tardigrade、DolphinSync、OrangDomain、Pipes、SharkChest、Spectator、Adapt、RealisticSeasons。16 份运行 jar 中未检出旧包名、旧入口或旧插件名引用，相关 API 已发布本地 Maven；Octopus 继续为 26.2。
+- 10 个共享调用方通过 Lobby/plugins/update 和 `U.sh sc update q` 同步；OrangDomain、SharkChest 直接替换 Lobby 安装包。按用户对改名插件的要求，四个 Paper 节点和 Master 均直接安装 `CrabKotlin-2.3.20.jar` 并移除原 `CarbKotlin-2.3.20.jar`，没有通过 update 处理改名。
+- 03:41:37 从 ma 广播 `slimemaster execute * stop`，03:41:39 停止 Master；替换 Master 三个运行包后，03:41:46 执行 `sh ./Start.sh`。没有创建额外备份。
+
+| 节点 | 启动完成 | 已核对安装 jar 数量 | ERROR 行数 |
+| --- | --- | --- | --- |
+| Master | 03:42:03 | 3 | 0 |
+| Lobby | 03:43:15 | 13 | 0 |
+| Worker-1 | 03:43:08 | 11 | 0 |
+| Worker-2 | 03:43:08 | 11 | 0 |
+| Worker-3 | 03:42:21 | 11 | 0 |
+
+- 49 份安装 jar 的 SHA-256 均与本地产物一致，五端 plugins 中旧名 jar 已移除，待更新目录没有遗留文件。CrabKotlin 在五端均以新名称正常加载；没有发现依赖缺失或类加载冲突。
+- 03:43:50 的节点查询确认 lobby、worker-1、worker-2、remote-1 全部在线；随后四端 `customrecipe list` 均返回 125 个配方，`pipes info` 均成功且没有孤立显示实体。
+- 与本轮重启前日志对照，未发现新增 WARN；资源包工作流警告继续按用户要求忽略。Lobby 仍有 PacketEvents 报出的 `EcoMode.packetSend(EcoMode.kt:207)` 空玩家异常（以 WARN 记录），同一堆栈在重启前 `2026-09-26-13.log.gz` 已出现 244 次，本轮按用户要求保留旧问题，没有扩大修改业务逻辑。此前 IdleDetector 修复仍包含在本轮构建中。
+- 验证覆盖构建、产物引用、启动、节点联通及上述查询；不代表全部游戏内交互均已逐项验收。没有新增测试单元，没有删除非 jar 文件。

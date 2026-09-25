@@ -1,11 +1,11 @@
 # Common utilities
 
 Based on TabooLib common-util 6.3.0-test-6-23-1 (MIT). Consumers use the existing
-non-transitive CarbKotlin `api` compile-only artifact; never shade these classes.
+non-transitive CrabKotlin `api` compile-only artifact; never shade these classes.
 
 ## Packages
 
-All public general-purpose tools live under `me.xiaozhangup.carb.common`:
+All public general-purpose tools live under `me.xiaozhangup.crab.common`:
 
 - `util`: collections, iteration, strings/placeholders, variable parsing, progress
   bars, random numbers, numeric helpers, optional values, lazy delegates, timing,
@@ -16,13 +16,13 @@ All public general-purpose tools live under `me.xiaozhangup.carb.common`:
   event bus; it does not receive TabooLib's internal framework events.
 - `reflect`: annotation helpers and legacy reflection wrappers delegating to the
   shared Reflex implementation. `ClassHelper` is a Kotlin alias for the existing
-  `me.xiaozhangup.carb.reflect.util.ClassHelper` (Java callers use that class).
+  `me.xiaozhangup.crab.reflect.util.ClassHelper` (Java callers use that class).
 
 ```kotlin
-import me.xiaozhangup.carb.common.io.newFile
-import me.xiaozhangup.carb.common.util.orNull
-import me.xiaozhangup.carb.common.util.randomDouble
-import me.xiaozhangup.carb.common.function.throttle
+import me.xiaozhangup.crab.common.io.newFile
+import me.xiaozhangup.crab.common.util.orNull
+import me.xiaozhangup.crab.common.util.randomDouble
+import me.xiaozhangup.crab.common.function.throttle
 ```
 
 No TabooLib runtime is needed by these tools. Guava is provided by the supported

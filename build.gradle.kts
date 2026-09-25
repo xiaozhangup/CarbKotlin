@@ -38,7 +38,7 @@ evaluationDependsOn(":velocity")
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            artifactId = "CarbKotlin"
+            artifactId = "CrabKotlin"
             for (platform in listOf("paper", "velocity")) {
                 artifact(project(":$platform").tasks.named("apiJar")) {
                     classifier = platform

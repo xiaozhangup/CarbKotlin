@@ -1,6 +1,6 @@
 # Shared configuration, Redis and reflection
 
-Consumers use the non-transitive `me.xiaozhangup.crab:CarbKotlin:2.3.20:paper`
+Consumers use the non-transitive `me.xiaozhangup.crab:CrabKotlin:2.3.20:paper`
 compile-only artifact. Use classifier `velocity` instead for Velocity. Each full platform plugin provides
 the runtime classes for that platform; consumers must not shade these packages.
 
@@ -20,7 +20,7 @@ val redis by lazy { crab.redis(config.getConfigurationSection("redis")!!) }
 crab.close()
 ```
 
-Configuration types and `@Config` live in `me.xiaozhangup.carb.configuration`.
+Configuration types and `@Config` live in `me.xiaozhangup.crab.configuration`.
 The existing section API, delegates, YAML comments and reload callbacks remain.
 `migrate = true` copies missing defaults without overwriting configured values.
 File auto-reload polls modification time and length every 500 ms and runs callbacks
@@ -35,7 +35,7 @@ registration remains in the plugin. The shared command registry and explicit
 `crab.lifecycle` dispatcher reuse this scanner. Native Velocity listeners can be
 registered with `crab.registerEvents()`. See COMMANDS.md and CRAB.md.
 
-Redis types live in `me.xiaozhangup.carb.redis`. `connector.connection()`
+Redis types live in `me.xiaozhangup.crab.redis`. `connector.connection()`
 returns one shared connection facade per connector; ordinary operations borrow
 and return a pooled client. Each connector owns its subscriptions and lock renewal.
 Locks retain the `taboo_redis_lock__lock` key prefix and use per-owner tokens.
@@ -55,7 +55,7 @@ Locks retain the `taboo_redis_lock__lock` key prefix and use per-owner tokens.
   configuration internal package; the patched ObjectConverter comes from
   TabooLib's configuration sources. Full modified sources are in this repository.
 
-Paper consumers use native entry classes and CarbKotlin services. They no longer
+Paper consumers use native entry classes and CrabKotlin services. They no longer
 install BukkitUtil, BukkitHook, minecraft-i18n or their internal configuration copies.
 The migrated inventory/serialization/Vault/placeholder helpers and Baffle/RandomList
 are adapted from the same MIT-licensed TabooLib release; the included TabooLib

@@ -5,5 +5,5 @@ pluginManagement {
     }
 }
 
-rootProject.name = "CarbKotlin"
+rootProject.name = "CrabKotlin"
 include("common", "paper", "velocity")
