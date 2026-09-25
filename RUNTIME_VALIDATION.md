@@ -225,3 +225,8 @@ Whale 构建与本地 Maven 发布成功，产物上传至约定目录；完整�
 - Worker-3 于 05:11:17 连接尚未就绪的 Master，被拒绝后出现与上轮相同的 channel/模块初始化异常；05:11:23 启动完成但未联网。已请用户通过已有面板再次重启，待完成重新启动后的联通与查询验收；没有修改连接代码或增加控制通道。
 - Worker-2 05:12:12、Worker-1 05:12:13、Lobby 05:12:18 完成启动；05:13:02 Master 确认这三个节点在线。三端 `customrecipe list` 均返回 125 个配方、`pipes info` 均返回没有孤立显示实体，Lobby `poly` 返回 Usage。对照重启前日志，Master 和这三个 Paper 节点没有新增 WARN/ERROR 类型，既有 EcoMode 与 CraftEngine 问题仍保留。
 - 未新增测试单元，未提交推送，未清理上传文件，未删除非 jar 文件；客户端交互未逐项验收。
+
+## 提交与上传包清理（2026-09-26）
+
+- 按用户后续授权提交本轮 9 个仓库的源码与文档。Whale 的 CraftEngineHandler、CustomFishingHandler 源码统一到 `flexible.handler`，补跑构建与本地 Maven 发布通过；运行 JAR 的 SHA-256 与已安装产物完全相同，无需再次部署。
+- 按用户授权清理 `~/Minecraft` 根目录的 11 个上传 JAR；删除前逐项复核清单哈希与全部目标节点安装哈希一致。根目录仅保留 `SlimeUpdater-1.0-SNAPSHOT-all.jar`，未删除插件目录、待更新目录或任何非 JAR 文件。Worker-3 本轮重新启动后的联通验收仍待完成。
