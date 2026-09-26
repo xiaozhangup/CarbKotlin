@@ -12,7 +12,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 /** Shared services with per-plugin ownership and one shutdown entry point. */
 open class PluginResources(private val anchor: Class<*>, private val dataFolder: () -> File) : AutoCloseable {
     val scanner = PluginScanner(anchor)
-    val lifecycle by lazy { me.xiaozhangup.crab.lifecycle.Lifecycle(scanner) }
+    val lifecycle by lazy { me.xiaozhangup.crab.lifecycle.LifeCycleDispatcher(scanner) }
     private val logger = org.slf4j.LoggerFactory.getLogger(anchor.simpleName)
 
     fun getDataFolder(): File = dataFolder().apply { mkdirs() }

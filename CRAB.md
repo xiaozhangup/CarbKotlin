@@ -107,7 +107,7 @@ all annotated commands/listeners or close Crab from a `CrabPlugin` hook. Those
 operations are owned by the base. Per-object dynamic registrations still use
 `crab` directly. Specialized business resources remain the plugin's responsibility.
 
-The standalone `Crab` and platform-neutral `Lifecycle` utility remain available
+The standalone `Crab` and platform-neutral `LifeCycleDispatcher` utility remain available
 for native integrations that cannot extend `CrabPlugin`. Such integrations still
 construct/bind their Crab and explicitly drive initialization and shutdown.
 The utility itself installs no platform hooks.

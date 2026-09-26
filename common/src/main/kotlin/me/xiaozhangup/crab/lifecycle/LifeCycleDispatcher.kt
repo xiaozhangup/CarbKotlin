@@ -3,7 +3,7 @@ package me.xiaozhangup.crab.lifecycle
 import me.xiaozhangup.crab.reflect.PluginScanner
 
 /** Discovers methods without initializing their owners until their stage is invoked. */
-class Lifecycle(private val scanner: PluginScanner) {
+class LifeCycleDispatcher(private val scanner: PluginScanner) {
     private val handlers by lazy {
         scanner.classes.flatMap { type ->
             type.structure.methods.filter { it.isAnnotationPresent(Awake::class.java) }.map { method ->
